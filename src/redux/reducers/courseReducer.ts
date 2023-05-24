@@ -1,20 +1,26 @@
 import { CourseAction, CourseData, CourseState } from "../Types/coursesTypes";
 
+const course = localStorage.getItem("course");
+const intialCourse = course ? JSON.parse(course) : [];
 
-export const courseReducer=(data:CourseState = [], action: CourseAction) :CourseState=>{
-    switch(action.type){
-        case 'ADD_COURSE':
-            return [...data,action.payload]
+export const courseReducer = (
+  data: CourseState = course ? intialCourse : [],
+  action: CourseAction
+): CourseState => {
+  switch (action.type) {
+    case "ADD_COURSE":
+      localStorage.setItem("course", JSON.stringify([...data, action.payload]));
+      return [...data, action.payload];
 
-        case 'UPDATE_COURSE':
+    case "UPDATE_COURSE":
+      const updatedCourse = data.map((item: CourseData) =>
+        item.id === action.payload.id ? action.payload : item
+      );
+      localStorage.setItem("course", JSON.stringify([...updatedCourse]));
 
-        const updatedCourse = data.map((item:CourseData) =>
-            item.id === action.payload.id ? action.payload : item
-          );
-          return [...updatedCourse]
-           
-            
-        default:
-                return data;
-    }
-}
+      return [...updatedCourse];
+
+    default:
+      return data;
+  }
+};

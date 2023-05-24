@@ -53,7 +53,6 @@ const Student: React.FC = () => {
         college,
         city,
       };
-      console.log("dasasd", updatedStudent);
       dispatch(editStudent(updatedStudent));
     } else {
       const newStudent: StudentData = {
