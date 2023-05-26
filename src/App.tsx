@@ -1,21 +1,36 @@
 import './App.css';
 import Student from './components/Student/Student';
-import { Routes,Route, BrowserRouter } from 'react-router-dom';
+import { useRoutes } from 'react-router-dom';
 import Teacher from './components/Teacher/Teacher';
 import Courses from './components/Courses/Courses';
 import MainPage from './components/MainPage';
+import Header from './components/Header';
+
 function App() {
+
+const routes = useRoutes([
+  {
+    path:'/',
+    element:<MainPage/>
+  },
+  {
+    path:'/student',
+    element:<Student/>
+  },
+  {
+    path:'/teacher',
+    element:<Teacher />
+  },
+  {
+    path:'/courses',
+    element:<Courses/>
+  }
+])
+
   return (
     <div className="App">
-      <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<MainPage/>} />
-        <Route path='/student' element={<Student/>} />
-        <Route path='/teacher' element={<Teacher />} />
-        <Route path='/courses' element={<Courses/>} />
-      </Routes>
-      </BrowserRouter>
-     
+      <Header/>
+        {routes}
     </div>
   );
 }

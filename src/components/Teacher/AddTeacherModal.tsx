@@ -1,6 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { Button, Modal, TextField, Box } from "@mui/material";
 import { TeacherData } from "../../redux/Types/teacherTypes";
+
+interface initialData {
+  id: number;
+  name: string;
+  age: number;
+  subject: string;
+  college: string;
+}
 
 const style = {
   position: "absolute" as "absolute",
@@ -19,9 +28,9 @@ interface AddTeacherModalProps {
   onClose: () => void;
   onSubmit: (
     name: string,
-    age:string,
-    subject:string,
-    college:string,
+    age: number,
+    subject: string,
+    college: string
   ) => void;
   editingTeacher: TeacherData | null;
 }
@@ -32,74 +41,100 @@ const AddTeacherModal: React.FC<AddTeacherModalProps> = ({
   onSubmit,
   editingTeacher,
 }) => {
-  const [name, setName] = useState("");
-  const [age, setAge] = useState('');
-  const [subject, setSubject] = useState("");
-  const [college, setCollege] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+  } = useForm<initialData>();
 
   useEffect(() => {
     if (editingTeacher) {
-      setName(editingTeacher.name);
-      setAge(editingTeacher.age)
-      setSubject(editingTeacher.subject);
-      setCollege(editingTeacher.college);
+      const { name, age, subject, college } = editingTeacher;
+      setValue("name", name || "");
+      setValue("age", age || 0);
+      setValue("subject", subject || "");
+      setValue("college", college || "");
     } else {
-      setName("");
-      setSubject("");
-      setCollege("");
+      reset();
     }
-  }, [editingTeacher]);
+  }, [editingTeacher, reset, setValue]);
 
-  const handleSubmit = () => {
-    onSubmit(name, age,subject, college);
-    setName("");
-    setAge('');
-    setSubject("");
-    setCollege("");
+  const handleModalClose = () => {
+    onClose();
+    reset();
+  };
+
+  const handleFormSubmit = (data: initialData) => {
+    onSubmit(data.name, data.age, data.subject, data.college);
+    reset();
     onClose();
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
-      <Box sx={style}>
-        <div>
-          <TextField
-            label="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            fullWidth
-          />
-        </div>
+    <Modal open={open} onClose={handleModalClose} >
+      <Box sx={style} className="modal">
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
+          <div>
+            <TextField
+              label="Name"
+              {...register("name", {
+                required: "Name is required",
+                pattern: {
+                  value: /^[a-zA-Z\s]*$/,
+                  message: "Name should not contain numbers",
+                },
+              })}
+              fullWidth
+              error={!!errors.name}
+              helperText={errors.name && errors.name.message?.toString()}
+            />
+          </div>
 
-        <TextField
-          label="Age"
-          type="number"
-          value={age}
-          onChange={(e) => setAge(e.target.value)}
-          sx={{ mt: 2 }}
-          fullWidth
-        />
-        <div>
-          <TextField
-            label="Subject"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
+          <div>
+            <TextField
+              label="Age"
+              type="number"
+              {...register("age", { required: "Age is required", min: 0 })}
+              fullWidth
+              error={!!errors.age}
+              helperText={errors.age && errors.age.message?.toString()}
+              sx={{ mt: 2 }}
+            />
+          </div>
+
+          <div>
+            <TextField
+              label="Subject"
+              {...register("subject", { required: "Subject is required" })}
+              fullWidth
+              error={!!errors.subject}
+              helperText={errors.subject && errors.subject.message?.toString()}
+              sx={{ mt: 2 }}
+            />
+          </div>
+
+          <div>
+            <TextField
+              label="College"
+              {...register("college", { required: "College is required" })}
+              fullWidth
+              error={!!errors.college}
+              helperText={errors.college && errors.college.message?.toString()}
+              sx={{ mt: 2 }}
+            />
+          </div>
+
+          <Button
+            className="btn-green"
+            variant="contained"
+            type="submit"
             sx={{ mt: 2 }}
-            fullWidth
-          />
-        </div>
-        <div>
-          <TextField
-            label="College"
-            value={college}
-            onChange={(e) => setCollege(e.target.value)}
-            sx={{ mt: 2 }}
-            fullWidth
-          />
-        </div>
-        <Button variant="contained" onClick={handleSubmit} sx={{ mt: 2 }}>
-          Submit
-        </Button>
+          >
+            Submit
+          </Button>
+        </form>
       </Box>
     </Modal>
   );

@@ -1,45 +1,24 @@
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableRow,
-    TableHead,
-  } from "@mui/material";
-import { Link } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
+import { CardMedia } from "@mui/material";
 
-const MainPage:React.FC = () => {
-    const navigate = useNavigate();
-  return(
+const image = [
+  {
+    title: "School",
+    imgSrc:
+      "https://img.freepik.com/premium-vector/school-education-building-street-outdoor-landscape-cartoon-illustration_7081-1943.jpg?w=2000",
+  },
+];
+
+const MainPage: React.FC = () => {
+  const { imgSrc } = image[0];
+  return (
     <>
-      <Card sx={{ minWidth: 275 }}>
-      <CardContent>
-        <Typography gutterBottom>
-                Main page
-        </Typography>
-      </CardContent>
-    </Card>
-      <TableContainer >
-        <Table>
-          <TableHead>
-          <TableRow>
-            <TableCell className="table-cell"><Link onClick={() => navigate("/student")}>Student</Link></TableCell>
-            <TableCell className="table-cell"><Link onClick={() => navigate("/teacher")}>Teacher</Link></TableCell>
-            <TableCell className="table-cell"><Link onClick={() => navigate("/courses")}>Course</Link></TableCell>
-          </TableRow>
-          </TableHead>
-          
-          <TableBody>
-            
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <CardMedia
+        style={{ height: "100px" }}
+        className="card-image"
+        image={imgSrc}
+      />
     </>
-  )
-  };
-  
-  export default MainPage;
+  );
+};
+
+export default MainPage;

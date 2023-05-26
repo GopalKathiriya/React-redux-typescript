@@ -1,4 +1,4 @@
-import { AddCourse, CourseData, EditCourse } from '../Types/coursesTypes';
+import { AddCourse, CourseData, DeleteCourse, EditCourse } from '../Types/coursesTypes';
 
 export const addCourse = (course: CourseData): AddCourse => {
   return {
@@ -13,3 +13,10 @@ export const editCourse = (course: CourseData): EditCourse => {
       payload: course,
     };
   };
+
+export const deleteCourse = (courseId: number): DeleteCourse =>{
+  return{
+    type: 'DELETE_COURSE',
+    payload: courseId,
+  }
+}

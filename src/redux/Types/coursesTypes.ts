@@ -10,12 +10,6 @@ export interface RootCourseState {
     courseReducer: CourseData[]
 }
 
-
-export interface CourseList {
-    type:'COURSE_LIST';
-    payload:CourseData;
-}
-
 export interface AddCourse {
     type:'ADD_COURSE';
     payload:CourseData;
@@ -26,4 +20,9 @@ export interface EditCourse{
     payload:CourseData
 }
 
-export type CourseAction = CourseList | AddCourse |EditCourse
+export interface DeleteCourse{
+    type:'DELETE_COURSE';
+    payload: number
+}
+
+export type CourseAction =  AddCourse | EditCourse | DeleteCourse

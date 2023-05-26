@@ -1,4 +1,4 @@
-import { StudentData,AddStudent,EditStudent } from '../Types/studentTypes';
+import { StudentData,AddStudent,EditStudent, DeleteStudent } from '../Types/studentTypes';
 
 export const addStudent = (student: StudentData): AddStudent => {
   return {
@@ -13,3 +13,10 @@ export const editStudent = (student: StudentData): EditStudent => {
       payload: student,
     };
   };
+
+export const deleteStudent = (studentId: number): DeleteStudent => {
+  return {
+    type: 'DELETE_STUDENT',
+    payload: studentId,
+  };
+};

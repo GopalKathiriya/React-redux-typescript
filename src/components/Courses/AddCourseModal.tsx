@@ -1,6 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { Button, Modal, TextField, Box } from "@mui/material";
 import { CourseData } from "../../redux/Types/coursesTypes";
+
+interface initialData {
+  id: number;
+  name: string;
+  durationInMonths: string;
+}
 
 const style = {
   position: "absolute" as "absolute",
@@ -17,10 +24,7 @@ const style = {
 interface AddCourseModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (
-    name: string,
-    durationInMonths: string,
-  ) => void;
+  onSubmit: (name: string, durationInMonths: string) => void;
   editingCourse: CourseData | null;
 }
 
@@ -30,51 +34,80 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({
   onSubmit,
   editingCourse,
 }) => {
-  const [name, setName] = useState("");
-  const [durationInMonths, setDurationInMonths] = useState('');
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+  } = useForm<initialData>();
 
   useEffect(() => {
     if (editingCourse) {
-      setName(editingCourse.name);
-      setDurationInMonths(editingCourse.durationInMonths)
+      setValue("name", editingCourse.name);
+      setValue("durationInMonths", editingCourse.durationInMonths);
     } else {
-      setName("");
-      setDurationInMonths('')
+      reset();
     }
-  }, [editingCourse]);
+  }, [editingCourse, reset, setValue]);
 
-  const handleSubmit = () => {
-    onSubmit(name,durationInMonths);
-    setName("");
-    setDurationInMonths('');
+  const handleModalClose = () => {
+    onClose();
+    reset();
+  };
+
+  const handleFormSubmit = (data: initialData) => {
+    onSubmit(data.name, data.durationInMonths);
+    reset();
     onClose();
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
-      <Box sx={style}>
-        <div>
-          <TextField
-            label="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            fullWidth
-          />
-        </div>
+    <Modal open={open} onClose={handleModalClose} >
+      <Box sx={style} className="modal">
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
+          <div>
+            <TextField
+              label="Name"
+              {...register("name", {
+                required: "Name is required",
+                pattern: {
+                  value: /^[a-zA-Z\s]*$/,
+                  message: "Name should not contain numbers",
+                },
+              })}
+              fullWidth
+              error={!!errors.name}
+              helperText={errors.name && errors.name.message?.toString()}
+            />
+          </div>
 
-        <TextField
-          label="durationInMonths"
-          type="number"
-          value={durationInMonths}
-          onChange={(e) => setDurationInMonths(e.target.value)}
-          sx={{ mt: 2 }}
-        fullWidth
-        /> 
-       
+          <div>
+            <TextField
+              label="Duration in Months"
+              type="number"
+              {...register("durationInMonths", {
+                required: "Duration is required",
+              })}
+              sx={{ mt: 2 }}
+              fullWidth
+              error={!!errors.durationInMonths}
+              helperText={
+                errors.durationInMonths &&
+                errors.durationInMonths.message?.toString()
+              }
+            />
+          </div>
 
-        <Button variant="contained" onClick={handleSubmit} sx={{ mt: 2 }}>
-          Submit
-        </Button>
+          <Button
+            className="btn-green"
+            variant="contained"
+            type="submit"
+            sx={{ mt: 2 }}
+          >
+            Submit
+          </Button>
+        </form>
       </Box>
     </Modal>
   );

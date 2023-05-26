@@ -1,7 +1,7 @@
 export interface StudentData {
     id:number;
     name:string;
-    age:string;
+    age:number;
     grades:string;
     college:string;
     city:string;
@@ -23,4 +23,10 @@ export interface EditStudent{
     payload:StudentData
 }
 
-export type StudentAction =  AddStudent | EditStudent
+export interface DeleteStudent {
+    type: 'DELETE_STUDENT';
+    payload: number; 
+  }
+  
+
+export type StudentAction =  AddStudent | EditStudent | DeleteStudent

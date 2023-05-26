@@ -6,6 +6,7 @@ import {
 
 const teacher = localStorage.getItem("teacher");
 const intialTeacher = teacher ? JSON.parse(teacher) : {};
+
 export const teacherReducer = (
   data: TeacherState = teacher ? intialTeacher : [],
   action: TeacherAction
@@ -24,6 +25,13 @@ export const teacherReducer = (
       );
       localStorage.setItem("teacher", JSON.stringify([...updatedTeacher]));
       return [...updatedTeacher];
+
+    case "DELETE_TEACHER":
+      const deletedTeacher = data.filter(
+        (teacher: TeacherData) => teacher.id !== action.payload
+      );
+      localStorage.setItem("teacher", JSON.stringify([...deletedTeacher]));
+      return [...deletedTeacher];
 
     default:
       return data;

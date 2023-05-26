@@ -20,6 +20,13 @@ export const courseReducer = (
 
       return [...updatedCourse];
 
+    case "DELETE_COURSE":
+      const deletedCourse = data.filter(
+        (course: CourseData) => course.id !== action.payload
+      );
+      localStorage.setItem("course", JSON.stringify([...deletedCourse]));
+      return [...deletedCourse];
+
     default:
       return data;
   }

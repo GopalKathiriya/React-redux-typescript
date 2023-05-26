@@ -5,6 +5,7 @@ import {
 } from "../Types/studentTypes";
 const student = localStorage.getItem("student");
 const intialStudent = student ? JSON.parse(student) : {};
+
 export const studentReducer = (
   data: StudentState = student ? intialStudent : [],
   action: StudentAction
@@ -23,6 +24,14 @@ export const studentReducer = (
       );
       localStorage.setItem("student", JSON.stringify([...updatedStudent]));
       return [...updatedStudent];
+
+    case "DELETE_STUDENT":
+      const deletedStudent = data.filter(
+        (student: StudentData) => student.id !== action.payload
+      );
+      localStorage.setItem("student", JSON.stringify([...deletedStudent]));
+      return [...deletedStudent];
+
     default:
       return data;
   }

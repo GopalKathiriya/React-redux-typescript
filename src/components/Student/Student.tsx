@@ -7,26 +7,29 @@ import {
   TableRow,
   Button,
   TableHead,
+  TablePagination,
 } from "@mui/material";
-// import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
-import { useSelector, useDispatch } from "react-redux";
-import { StudentData, RootStudentState } from "../../redux/Types/studentTypes";
+import { useDispatch } from "react-redux";
+import { StudentData } from "../../redux/Types/studentTypes";
 import AddStudentModal from "./AddStudentModal";
-import { addStudent, editStudent } from "../../redux/actions/StudentAction";
-import { Link } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import {
+  addStudent,
+  deleteStudent,
+  editStudent,
+} from "../../redux/actions/StudentAction";
+import { Selectors } from "../../utility/useSelector";
+import NoData from "../NoData";
 
 const Student: React.FC = () => {
-  const students = useSelector(
-    (state: RootStudentState) => state.studentReducer
-  );
-  const navigate = useNavigate();
+  const { students } = Selectors();
 
   const dispatch = useDispatch();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<StudentData | null>(
     null
   );
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -39,7 +42,7 @@ const Student: React.FC = () => {
 
   const handleSubmit = (
     name: string,
-    age: string,
+    age: number,
     grades: string,
     college: string,
     city: string
@@ -76,53 +79,91 @@ const Student: React.FC = () => {
     }
   };
 
+  const handleDelete = (studentId: number) => {
+    dispatch(deleteStudent(studentId));
+  };
+
+  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const studentsToShow = students.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
   return (
     <>
-      <div>
-        <Link onClick={() => navigate("/")}>Back To Main Page</Link>
+      <div className="header-table">
         <Button
-          sx={{ margin: "24px" }}
+          className="btn-add"
           variant="contained"
           onClick={handleOpenModal}
         >
           Add Student
         </Button>
       </div>
+      <div className="content">
+        {students.length > 0 ? (
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell className="table-cell">Name</TableCell>
+                  <TableCell className="table-cell">Age</TableCell>
+                  <TableCell className="table-cell">Grades</TableCell>
+                  <TableCell className="table-cell">College</TableCell>
+                  <TableCell className="table-cell">City</TableCell>
+                  <TableCell className="table-cell">Action</TableCell>
+                </TableRow>
+              </TableHead>
 
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell className="table-cell">Name</TableCell>
-              <TableCell className="table-cell">Age</TableCell>
-              <TableCell className="table-cell">Grades</TableCell>
-              <TableCell className="table-cell">College</TableCell>
-              <TableCell className="table-cell">City</TableCell>
-              <TableCell className="table-cell">Action</TableCell>
-            </TableRow>
-          </TableHead>
+              <TableBody>
+                {studentsToShow.map((student) => (
+                  <TableRow key={student.id}>
+                    <TableCell>{student.name}</TableCell>
+                    <TableCell>{student.age}</TableCell>
+                    <TableCell>{student.grades}</TableCell>
+                    <TableCell>{student.college}</TableCell>
+                    <TableCell>{student.city}</TableCell>
+                    <TableCell>
+                      <Button
+                        className="btn-green"
+                        variant="contained"
+                        onClick={() => handleEdit(student.id)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        className="btn-green"
+                        variant="contained"
+                        onClick={() => handleDelete(student.id)}
+                        sx={{ margin: "10px" }}
+                      >
+                        Delete
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={students.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </TableContainer>
+        ) : (
+          <NoData/>
+        )}
+      </div>
 
-          <TableBody>
-            {students.map((student) => (
-              <TableRow key={student.id}>
-                <TableCell>{student.name}</TableCell>
-                <TableCell>{student.age}</TableCell>
-                <TableCell>{student.grades}</TableCell>
-                <TableCell>{student.college}</TableCell>
-                <TableCell>{student.city}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="contained"
-                    onClick={() => handleEdit(student.id)}
-                  >
-                    Edit
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
       <AddStudentModal
         open={modalOpen}
         onClose={handleCloseModal}

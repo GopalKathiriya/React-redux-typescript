@@ -1,4 +1,4 @@
-import { AddTeacher, TeacherData ,EditTeacher} from "../Types/teacherTypes";
+import { AddTeacher, TeacherData ,EditTeacher, DeleteTeacher} from "../Types/teacherTypes";
 
 export const addTeacher = (teacher: TeacherData): AddTeacher => {
     return {
@@ -13,3 +13,10 @@ export const addTeacher = (teacher: TeacherData): AddTeacher => {
       payload: teacher,
     };
   };
+
+  export const deleteTeacher =(teacherId: number):DeleteTeacher =>{
+    return{
+      type: 'DELETE_TEACHER',
+      payload: teacherId,
+    }
+  }
