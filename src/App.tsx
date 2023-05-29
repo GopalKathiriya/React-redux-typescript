@@ -1,24 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Student from './components/Student/Student';
+import { useRoutes } from 'react-router-dom';
+import Teacher from './components/Teacher/Teacher';
+import Courses from './components/Courses/Courses';
+import MainPage from './components/MainPage';
+import Header from './components/Header';
 
 function App() {
+
+const routes = useRoutes([
+  {
+    path:'/',
+    element:<MainPage/>
+  },
+  {
+    path:'/student',
+    element:<Student/>
+  },
+  {
+    path:'/teacher',
+    element:<Teacher />
+  },
+  {
+    path:'/courses',
+    element:<Courses/>
+  }
+])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header/>
+        {routes}
     </div>
   );
 }
